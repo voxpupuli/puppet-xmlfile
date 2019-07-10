@@ -79,5 +79,5 @@
   },
   "source": "git://github.com/TERC/puppet-xmlfile",
   "project_page": "https://github.com/TERC/puppet-xmlfile",
-  "license": "MIT or Apache 2.0"
+  "license": "Apache-2.0"
 }
