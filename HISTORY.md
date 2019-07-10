@@ -1,9 +1,4 @@
-## terc-xmlfile changelog
-
-Release notes for the terc-xmlfile module
-
----------------------------------------
-2014-06-09 Release 0.4.0
+## v0.4.0 (2014-06-09)
 
 ### Summary
 Fixes issues introduced by deprecation of :parent and type inheritance.
@@ -15,9 +10,7 @@ Removal of MIT license due to reuse of Puppetlabs code.
 ### Bugfixes
 - Issues in newer puppets
 
-
-2013-11-07 Release 0.3.1
-========================
+## v0.3.1 (2013-11-07)
 
 ### Summary
 This release adds tests, documentation improvements, and better Ruby 1.8.7 compatibility
@@ -29,8 +22,7 @@ This release adds tests, documentation improvements, and better Ruby 1.8.7 compa
 ### Bugfixes
 - Regular Expressions should now work correctly in Ruby 1.8.7
 
-2013-10-10 Release 0.3.0
-========================
+## v0.3.0 (2013-10-10)
 
 ### Summary
 This release adds the add command, this file, aliases for ins/rm, raw processing, conditional improvements, sort behavior bug fixes.
@@ -47,8 +39,7 @@ This release adds the add command, this file, aliases for ins/rm, raw processing
 - REXML now runs in raw mode for all nodes by default.
 - Sort now sorts by node name if third argument is either 0 length or nil.
 
-2013-10-07 Release 0.2.0
-========================
+## v0.2.0 (2013-10-07)
 
 ### Summary
 This is a minor release that warranted a minor version update due to the metaprogramming involved.
@@ -56,10 +47,7 @@ This is a minor release that warranted a minor version update due to the metapro
 #### Detailed Changes
 - Automatic importation of docs for inherited attributes on the inherited type.
 
-2013-10-07 Release 0.1.0
-========================
+## v0.1.0 (2013-10-07)
 
 ### Summary
 Initial Release
-
----------------------------------------
