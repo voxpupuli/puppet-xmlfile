@@ -201,5 +201,4 @@ describe 'XmlLens' do
       end
     end
   end
-    
 end
