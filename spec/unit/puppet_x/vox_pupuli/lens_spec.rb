@@ -8,27 +8,28 @@ RSpec::Matchers.define :be_xml_equivalent_to do |expected_xml|
   match do |actual_xml|
     n1 = Nokogiri::XML(actual_xml)
     n2 = Nokogiri::XML(expected_xml)
-    CompareXML.equivalent?(n1, n2, {verbose: true}).empty?
+    CompareXML.equivalent?(n1, n2, verbose: true).empty?
   end
 end
 
 # allows for interactive inspection when debugging
-def xml_equivalent?(str1, str2)
+def xml_equivalent?(str1, _str2)
   n1 = Nokogiri::XML(str1)
   n2 = Nokogiri::XML(str1)
   raise ArgumentError if n1.nil? && n2.nil?
-  CompareXML.equivalent?(n1, n2, {verbose: true})
+  CompareXML.equivalent?(n1, n2, verbose: true)
 end
 
 describe 'XmlLens' do
   let(:testobject) { XmlLens }
+
   # Build out tests as we come up with comparisons to augeas
 
   def lens_result(changes)
     PuppetX::VoxPupuli::Xmlfile::Lens.new(DOCUMENT, changes).evaluate.to_s
   end
 
-  CONTENT = <<-'EOT'
+  CONTENT = <<-'EOT'.freeze
   <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:amq="http://activemq.apache.org/schema/core"
@@ -43,7 +44,7 @@ describe 'XmlLens' do
       </bean>
 
       <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.data}">
-  
+
           <destinationPolicy>
               <policyMap>
                 <policyEntries>
@@ -61,7 +62,7 @@ describe 'XmlLens' do
           <managementContext>
               <managementContext createConnector="false"/>
           </managementContext>
-  
+
           <persistenceAdapter>
               <kahaDB directory="${activemq.data}/kahadb"/>
           </persistenceAdapter>
@@ -79,7 +80,7 @@ describe 'XmlLens' do
                   </tempUsage>
               </systemUsage>
           </systemUsage>
-  
+
           <transportConnectors>
               <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
               <transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>
@@ -88,20 +89,17 @@ describe 'XmlLens' do
           <shutdownHooks>
               <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
           </shutdownHooks>
-  
+
       </broker>
 
       <import resource="jetty.xml"/>
-  
+
   </beans>
       EOT
-  
+
   DOCUMENT = REXML::Document.new(CONTENT)
-  
-  describe :add do
-  end
-  
-  describe :set do
+
+  describe 'set' do
     test_list = [
       {
         change: 'set /beans/broker/plugins/authorizationPlugin/map/authorizationMap/authorizationEntries/authorizationEntry/[last()+1]/#attribute/queue "test"',
@@ -112,7 +110,7 @@ describe 'XmlLens' do
         change: 'set /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/name == "amqp"]/#attribute/uri "udp://testuri"',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
         replacement: '<transportConnector name="amqp" testattr="2" uri="udp://testuri"/>'
-      },
+      }
     ]
 
     test_list.each do |test|
@@ -132,7 +130,7 @@ describe 'XmlLens' do
     end
   end
 
-  describe :rm do
+  describe 'rm' do
     test_list = [
       {
         change: 'rm /beans/broker/plugins/authorizationPlugin/map/authorizationMap/authorizationEntries/authorizationEntry/[last()+1]/#attribute/queue "test"',
@@ -162,15 +160,15 @@ describe 'XmlLens' do
     ]
 
     it 'does not remove transport when testattr does not match' do
-        test = {
-          change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr != "2"][#attribute/name == "amqp"]',
-          pattern: '',
-          replacement: ''
-        }
-        result = lens_result(test[:change])
-        expected_result = CONTENT.gsub(test[:pattern], test[:replacement])
-        diff = xml_equivalent?(result, expected_result)
-        expect(diff.empty?).to be true
+      test = {
+        change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr != "2"][#attribute/name == "amqp"]',
+        pattern: '',
+        replacement: ''
+      }
+      result = lens_result(test[:change])
+      expected_result = CONTENT.gsub(test[:pattern], test[:replacement])
+      diff = xml_equivalent?(result, expected_result)
+      expect(diff.empty?).to be true
     end
 
     it 'does not remove transport when name does not match' do

@@ -1,93 +1,102 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:xmlfile_modification) do
-  let(:testobject) {  Puppet::Type.type(:xmlfile_modification) }
-  
-  describe :file do
-    it "should be a fully-qualified path" do
-      expect {
+  let(:testobject) { Puppet::Type.type(:xmlfile_modification) }
+
+  describe 'file' do
+    it 'is a fully-qualified path' do
+      expect do
         testobject.new(
-          :name   => 'foo',
-          :file   => 'my/path',
-      )}.to raise_error(Puppet::Error, /paths must be fully qualified/)
+          name: 'foo',
+          file: 'my/path'
+        )
+      end.to raise_error(Puppet::Error, %r{paths must be fully qualified})
     end
   end
-  
-  describe :changes do
-    it "should require a fully-qualified xpath" do
-      expect {
+
+  describe 'changes' do
+    it 'requires a fully-qualified xpath' do
+      expect do
         testobject.new(
-          :name   => "test",
-          :file   => "/my/path",
-          :changes => [ "set blah/bloo/hah \"test\""],
-      )}.to raise_error(Puppet::Error, /invalid xpath/)
+          name: 'test',
+          file: '/my/path',
+          changes: ['set blah/bloo/hah "test"']
+        )
+      end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
-    it "should not accept invalid commands" do
-      expect {
+    it 'does not accept invalid commands' do
+      expect do
         testobject.new(
-          :name   => "test",
-          :file   => "/my/path",
-          :changes => [ "sets /blah/bloo/hah \"test\""],
-      )}.to raise_error(Puppet::Error, /Unrecognized command/)
+          name: 'test',
+          file: '/my/path',
+          changes: ['sets /blah/bloo/hah "test"']
+        )
+      end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
-    describe "ins" do
-      it "should validate syntax" do
-        expect {
+    describe 'ins' do
+      it 'validates syntax' do
+        expect do
           testobject.new(
-            :name   => "test",
-            :file   => "/my/path",
-            :changes => [ "ins blue befores red"],
-        )}.to raise_error(Puppet::Error, /Invalid syntax/)
+            name: 'test',
+            file: '/my/path',
+            changes: ['ins blue befores red']
+          )
+        end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
     end
-    describe "set" do
-      it "should validate syntax" do
-        expect {
+    describe 'set' do
+      it 'validates syntax' do
+        expect do
           testobject.new(
-            :name   => "test",
-            :file   => "/my/path",
-            :changes => [ "set /blah/bloo/hah test"],
-        )}.to raise_error(Puppet::Error, /Invalid syntax/)
+            name: 'test',
+            file: '/my/path',
+            changes: ['set /blah/bloo/hah test']
+          )
+        end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
     end
   end
-  
-  describe :onlyif do
-    it "should require a fully-qualified xpath" do
-      expect {
+
+  describe 'onlyif' do
+    it 'requires a fully-qualified xpath' do
+      expect do
         testobject.new(
-          :name   => "test",
-          :file   => "/my/path",
-          :onlyif => [ "get blah/bloo/hah == \"test\""],
-      )}.to raise_error(Puppet::Error, /invalid xpath/)
+          name: 'test',
+          file: '/my/path',
+          onlyif: ['get blah/bloo/hah == "test"']
+        )
+      end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
-    it "should not accept invalid commands" do
-      expect {
+    it 'does not accept invalid commands' do
+      expect do
         testobject.new(
-          :name   => "test",
-          :file   => "/my/path",
-          :onlyif => [ "gets /blah/bloo/hah \"test\""],
-      )}.to raise_error(Puppet::Error, /Unrecognized command/)
+          name: 'test',
+          file: '/my/path',
+          onlyif: ['gets /blah/bloo/hah "test"']
+        )
+      end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
-    describe "get" do
-      it "should validate syntax" do
-        expect {
+    describe 'get' do
+      it 'validates syntax' do
+        expect do
           testobject.new(
-            :name   => "test",
-            :file   => "/my/path",
-            :onlyif => [ "get /blah/bloo/hah test"],
-        )}.to raise_error(Puppet::Error, /Invalid syntax/)
+            name: 'test',
+            file: '/my/path',
+            onlyif: ['get /blah/bloo/hah test']
+          )
+        end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
     end
-    
-    describe "match" do
-      it "should validate syntax" do
-        expect {
+
+    describe 'match' do
+      it 'validates syntax' do
+        expect do
           testobject.new(
-            :name   => "test",
-            :file   => "/my/path",
-            :onlyif => [ "match /blah/bloo/hah test"],
-        )}.to raise_error(Puppet::Error, /Invalid syntax/)
+            name: 'test',
+            file: '/my/path',
+            onlyif: ['match /blah/bloo/hah test']
+          )
+        end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
     end
   end
