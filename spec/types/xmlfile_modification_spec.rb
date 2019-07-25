@@ -11,7 +11,6 @@ describe Puppet::Type.type(:xmlfile_modification) do
           :file   => 'my/path',
       )}.to raise_error(Puppet::Error, /paths must be fully qualified/)
     end
-    it "should be required"
   end
   
   describe :changes do

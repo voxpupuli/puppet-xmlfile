@@ -1,8 +1,14 @@
 require 'puppet/type/file'
 require 'puppet/util/checksums'
-# It's not really a provider but there just isn't a great place to put this kind of thing
-# ok?
-require 'puppet/provider/xmlfile/lens'
+
+begin
+  require 'puppet_x/vox_pupuli/xmlfile/lens'
+rescue
+  require 'pathname'
+  mod = Puppet::Module.find('xmlfile', Puppet[:environment].to_s)
+  raise LoadError("Unable to find xmlfile module in module path") unless mod
+  require File.join(mod.path, 'lib', 'puppet_x', 'vox_pupuli', 'lens')
+end
 
 # Equivalent to the file resource in every way but how it handles content.
 Puppet::Type.newtype(:xmlfile) do

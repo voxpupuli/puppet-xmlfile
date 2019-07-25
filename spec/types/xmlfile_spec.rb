@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe Puppet::Type.type(:xmlfile) do
   let(:testobject) {  Puppet::Type.type(:xmlfile) }
   

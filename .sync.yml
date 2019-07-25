@@ -1,0 +1,5 @@
+---
+Gemfile:
+  required:
+    ":test":
+      - gem: compare-xml
