@@ -3,3 +3,5 @@ Gemfile:
   required:
     ":test":
       - gem: compare-xml
+.rubocop.yml:
+  inherit_from: .rubocop_todo.yml
