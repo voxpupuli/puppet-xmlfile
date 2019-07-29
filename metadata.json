@@ -1,11 +1,10 @@
 {
-  "name": "terc-xmlfile",
+  "name": "voxpupuli-xmlfile",
   "version": "0.4.0",
-  "summary": "TERC Puppet XMLFile Library",
-  "author": "cammoraton",
-  "description": "Adds the xmlfile type.",
+  "summary": "Augeas like syntax for managing xml files across windows and unix",
+  "author": "VoxPupuli",
   "dependencies": [],
-  "source": "git://github.com/TERC/puppet-xmlfile",
-  "project_page": "https://github.com/TERC/puppet-xmlfile",
+  "source": "git://github.com/voxpupuli/puppet-xmlfile",
+  "project_page": "https://github.com/voxpupuli/puppet-xmlfile",
   "license": "Apache-2.0"
 }

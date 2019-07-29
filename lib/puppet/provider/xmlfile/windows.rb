@@ -1,13 +1,13 @@
 # Not so sure about this one.
-Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, :parent => Puppet::Type.type(:file).provider(:windows)) do
-  confine :operatingsystem => :windows
-  
+Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, parent: Puppet::Type.type(:file).provider(:windows)) do
+  confine operatingsystem: :windows
+
   def exists?
     resource.exist?
   end
 
   def create
-    send("content=", resource.should_content)
+    send('content=', resource.should_content)
     resource.send(:property_fix)
   end
 
@@ -16,11 +16,15 @@ Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, :parent => Puppet::Type.ty
   end
 
   def content
-    actual = File.read(resource[:path]) rescue nil
-    (actual == resource.should_content) ? resource[:content] : actual
+    actual = begin
+               File.read(resource[:path])
+             rescue
+               nil
+             end
+    actual == resource.should_content ? resource[:content] : actual
   end
-  
-  def content=(value)
+
+  def content=(_value)
     File.open(resource[:path], 'w') do |handle|
       handle.print resource.should_content
     end
