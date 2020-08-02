@@ -11,7 +11,28 @@ def location_for(place, fake_version = nil)
 end
 
 group :test do
-  gem 'compare-xml',  :require => false
+  gem 'voxpupuli-test', '~> 2.0',  :require => false
+  gem 'coveralls',                 :require => false
+  gem 'simplecov-console',         :require => false
+  gem 'compare-xml',               :require => false
+end
+
+group :development do
+  gem 'travis',                   :require => false
+  gem 'travis-lint',              :require => false
+  gem 'guard-rake',               :require => false
+  gem 'overcommit', '>= 0.39.1',  :require => false
+end
+
+group :system_tests do
+  gem 'voxpupuli-acceptance',  :require => false
+end
+
+group :release do
+  gem 'github_changelog_generator',  :require => false, :git => 'https://github.com/voxpupuli/github-changelog-generator', :branch => 'voxpupuli_essential_fixes'
+  gem 'puppet-blacksmith',           :require => false
+  gem 'voxpupuli-release',           :require => false
+  gem 'puppet-strings', '>= 2.2',    :require => false
 end
 
 
