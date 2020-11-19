@@ -13,13 +13,13 @@
 
 If you have ever wanted to use augeas like syntax for xml files **without the use of augeas** the xmlfile module is for you.
 
-**NOTE** Augeas does not work on windows.
+**NOTE** Augeas does not work on Windows.
 
 The xmlfile type overrides the file type and inherits most of the file type attributes.
 Additionally, xmlfile type will process all xmlfile_modification resources and write them out to the xmlfile without
 causing resource conflicts or overwriting previously modified xml files.
 
-Works on posix and windows systems.
+Works on POSIX and Windows systems.
 
 ## Usage
 
@@ -30,21 +30,21 @@ Once the xmlfile resource is declared, you can further modify the xmlfile with t
 
 ```
 $mq_xml_file = "/etc/activemq/activemq.conf.xml"
-xmlfile{$mq_xml_file:
+xmlfile { $mq_xml_file:
   ensure => present
 }
 
-xmlfile_modification{"test" :
+xmlfile_modification { "test":
   file    => $mq_xml_file,
   changes => "set /beans/broker/transportConnectors/transportConnector[last()+1]/#attribute/name \"test\"",
   onlyif  => "match /beans/broker/transportConnectors/transportConnector[#attribute/name == \"test\"] size < 1",
 }
 
-xmlfile_modification{"test2" :
+xmlfile_modification { "test2":
   file    => $mq_xml_file,
   changes => [ "set /beans/broker/transportConnectors/transportConnector[last()+1]/#attribute/name \"tests\"",
                "set /beans/broker/transportConnectors/transportConnector[last()+1]/#attribute/value \"tests\""],
-  onlyif =>  [ "match /beans/broker/transportConnectors/transportConnector[#attribute/name == \"tests\"] size < 1" ],
+  onlyif  =>  [ "match /beans/broker/transportConnectors/transportConnector[#attribute/name == \"tests\"] size < 1" ],
 }
 ```
 
@@ -56,7 +56,7 @@ concat library, and sandwich augeas and file types that way, have a triggered ex
 managing multiple resources when what we really want is just one and some changes. Just no good way to really deal with it.
 
 My first thought was "my kingdom for an array!" which led to the databucket library, the idea behind which was to do
-collection of resource parameters at catalog compilition into an array, and then use that within the template. This idea, while
+collection of resource parameters at catalog compilation into an array, and then use that within the template. This idea, while
 cool, is, unfortunately, probably not reliable enough for production or capable of being made reliable enough for production. So
 collecting and using virtual or exported data and directly referencing it(IE: in a template) is out.
 
@@ -67,12 +67,12 @@ Hence this, which sidetracks the whole issue.
 By extending the Puppet file type and using some providers we can merge templated or sourced content and modifications and
 have puppet treat this content as if it had been passed directly.
 
-The changes themeselves are applied via the XmlLens class, which fakes being augeas. This is accomplished via the standard
+The changes themselves are applied via the XmlLens class, which fakes being augeas. This is accomplished via the standard
 ruby REXML library. Upshot of this is we can add in things like sorting.
 
 ## Limitations
 
-I don't have a complete windows puppet kit and so while we extend the windows provider and it should work, I can't actually
+I don't have a complete Windows puppet kit and so while we extend the Windows provider and it should work, I can't actually
 test it.
 
 Property fix is called via send on object creation. This may create a security issue when a file is first created if the properties are
