@@ -56,7 +56,7 @@ Puppet::Type.newtype(:xmlfile) do
       newparam(inherit, parent: klass) do
         desc klass.doc
       end
-    rescue Exception => err
+    rescue StandardError => err
       warning err.to_s
       warning "Inheritance assumption case problem: #{klass} undefined but not ignored"
     end
@@ -152,7 +152,7 @@ Puppet::Type.newtype(:xmlfile) do
     include Puppet::Util::Checksums
 
     # Convert the current value into a checksum so we don't pollute the logs
-    def is_to_s(value)
+    def is_to_s(value) # rubocop:disable Style/PredicateName
       md5(value)
     end
 

@@ -281,6 +281,7 @@ module PuppetX
           { final_path: final_path, exists: exists, remainder: remainder }
         end
 
+        # rubocop:disable Metrics/BlockNesting
         def collapse_functions(args)
           retval = ''
           cur_path = match('')
@@ -308,6 +309,7 @@ module PuppetX
           end
           retval
         end
+        # rubocop:enable Metrics/BlockNesting
 
         def evaluate_expression(attr, expr, val)
           # If attr and val are all digits assume an integer comparison
@@ -341,6 +343,7 @@ module PuppetX
           raise ArgumentError
         end
 
+        # rubocop:disable Metrics/BlockNesting
         def evaluate_match(match, args)
           return match unless args.is_a? String
           retval = match
@@ -353,7 +356,7 @@ module PuppetX
                 index = evaluate.match(%r{^(\[)?(\d+)(\])?$})[2].to_i - 1
                 return nil if (match.length < index) || !retval.include?(match[index])
                 retval = [match[index]]
-              else  # Function or bust!
+              else # Function or bust!
                 parse = evaluate.match(%r{(last)\((.*)?\)(\+|\-)?(\d+)?$})
                 return nil unless parse
                 case parse[1]
