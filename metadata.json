@@ -4,6 +4,12 @@
   "summary": "Augeas like syntax for managing xml files across windows and unix",
   "author": "VoxPupuli",
   "dependencies": [],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 5.5.8 < 7.0.0"
+    }
+  ],
   "source": "git://github.com/voxpupuli/puppet-xmlfile",
   "project_page": "https://github.com/voxpupuli/puppet-xmlfile",
   "license": "Apache-2.0"
