@@ -1,8 +1,8 @@
 {
-  "name": "voxpupuli-xmlfile",
+  "name": "puppet-xmlfile",
   "version": "0.4.0",
   "summary": "Augeas like syntax for managing xml files across windows and unix",
-  "author": "VoxPupuli",
+  "author": "Vox Pupuli",
   "dependencies": [],
   "requirements": [
     {
