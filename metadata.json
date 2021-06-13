@@ -1,6 +1,6 @@
 {
   "name": "puppet-xmlfile",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "summary": "Augeas like syntax for managing xml files across windows and unix",
   "author": "Vox Pupuli",
   "dependencies": [],
@@ -12,5 +12,6 @@
   ],
   "source": "git://github.com/voxpupuli/puppet-xmlfile",
   "project_page": "https://github.com/voxpupuli/puppet-xmlfile",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "issues_url": "https://github.com/voxpupuli/puppet-xmlfile/issues"
 }
