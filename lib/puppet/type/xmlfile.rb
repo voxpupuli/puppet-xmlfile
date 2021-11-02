@@ -208,7 +208,7 @@ Puppet::Type.newtype(:xmlfile) do
     end
 
     res.each do |resource|
-      process = XmlLens.new(xml_content, resource[:changes], resource[:onlyif])
+      process = PuppetX::VoxPupuli::Xmlfile::Lens.new(xml_content, resource[:changes], resource[:onlyif])
       xml_content = process.evaluate
     end
 
