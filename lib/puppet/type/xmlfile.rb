@@ -2,7 +2,7 @@ require 'puppet/type/file'
 require 'puppet/util/checksums'
 
 begin
-  require_relative '../../puppet_x/vox_pupuli/xmlfile/lens
+  require_relative '../../puppet_x/vox_pupuli/xmlfile/lens'
 rescue
   require 'pathname'
   mod = Puppet::Module.find('xmlfile', Puppet[:environment].to_s)
