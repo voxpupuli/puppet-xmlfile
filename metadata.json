@@ -3,13 +3,11 @@
   "version": "1.0.1-rc0",
   "summary": "Augeas like syntax for managing xml files across windows and unix",
   "author": "Vox Pupuli",
-  "dependencies": [
-
-  ],
+  "dependencies": [],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 6.1.0 < 8.0.0"
+      "version_requirement": ">= 7.0.0 < 8.0.0"
     }
   ],
   "source": "git://github.com/voxpupuli/puppet-xmlfile",
