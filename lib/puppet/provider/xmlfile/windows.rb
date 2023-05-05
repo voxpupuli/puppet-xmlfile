@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Not so sure about this one.
 Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, parent: Puppet::Type.type(:file).provider(:windows)) do
   confine operatingsystem: :windows
@@ -17,10 +19,10 @@ Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, parent: Puppet::Type.type(
 
   def content
     actual = begin
-               File.read(resource[:path])
-             rescue
-               nil
-             end
+      File.read(resource[:path])
+    rescue StandardError
+      nil
+    end
     actual == resource.should_content ? resource[:content] : actual
   end
 

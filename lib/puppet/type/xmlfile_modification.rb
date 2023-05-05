@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/type/file' # Let us use file validations
 
 # No provider for this so it should ultimately just be data
@@ -131,9 +133,7 @@ Puppet::Type.newtype(:xmlfile_modification) do
     isrequired
     validate do |value|
       # raise(Puppet::Error, "Invalid filename '#{value.inspect}'") unless value and value != ""
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
@@ -151,26 +151,31 @@ Puppet::Type.newtype(:xmlfile_modification) do
     when 'clear'
       validate_path(parse[2])
     when 'set'
-      args = parse[2].match(%r{(.*)\ \"(.*)\"$})
+      args = parse[2].match(%r{(.*)\ "(.*)"$})
       raise(Puppet::Error, 'Invalid syntax for set command') if args.nil?
+
       validate_path(parse[1], args[1])
     when 'rm', 'remove'
       validate_path(parse[1], parse[2])
     when 'sort'
       args = parse[2].match(%r{(.*)(\ )?(.*|text)?(\ )?(desc|asc)?$})
       raise(Puppet::Error, 'Invalid syntax for sort command') if args.nil?
+
       validate_path(parse[1], args[1])
     when 'match'
       query = parse[2].match(%r{(.*)\ size\ (==|!=|<|>|<=|>=)\ (\d)+$})
       raise(Puppet::Error, 'Invalid syntax for match conditional') if query.nil?
+
       validate_path(parse[1], query[1])
     when 'ins', 'insert'
       args = parse[2].match(%r{(.*)\ (before|after)\ (.*)$})
       raise(Puppet::Error, 'Invalid syntax for ins command') if args.nil?
+
       validate_path(parse[1], args[1])
     when 'get'
-      query = parse[2].match(%r{^(.*)\ (==|!=|<|>|<=|>=)\ \"(.*)\"$})
+      query = parse[2].match(%r{^(.*)\ (==|!=|<|>|<=|>=)\ "(.*)"$})
       raise(Puppet::Error, 'Invalid syntax for get conditional') if query.nil?
+
       validate_path(parse[1], query[1])
     else
       raise(Puppet::Error, "Unrecognized command #{parse[1]}")
@@ -178,6 +183,6 @@ Puppet::Type.newtype(:xmlfile_modification) do
   end
 
   def validate_path(prefix, value)
-    raise(Puppet::Error, "#{prefix}: invalid xpath #{value}, path must be fully qualified") unless value =~ %r{^\/}
+    raise(Puppet::Error, "#{prefix}: invalid xpath #{value}, path must be fully qualified") unless value =~ %r{^/}
   end
 end

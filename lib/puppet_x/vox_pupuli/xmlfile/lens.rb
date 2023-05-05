@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rexml/document'
 
 # XMLLens wraps around rexml/document and XPath to provide
@@ -9,6 +11,7 @@ module PuppetX
         # Initialized with the file(preloaded), any changes and any conditions
         def initialize(xml, changes = nil, conditions = nil)
           raise ArgumentError unless xml.is_a? REXML::Document
+
           @xml = xml
           @operations = []
           @validations = []
@@ -29,6 +32,7 @@ module PuppetX
           # First up validations
           @validations.each do |validate|
             next if validate.call
+
             return @xml
           end
           # Those passed, so next up is actual operations
@@ -53,22 +57,23 @@ module PuppetX
 
         # Clears an element
         def clear(path)
-          if path.is_a? Array
+          case path
+          when Array
             path.each do |p|
               p.elements.each do |child|
                 p.elements.delete(child)
               end
               p.text = nil
-              p.attributes.keys.each do |key|
+              p.attributes.each_key do |key|
                 p.attributes.delete(key)
               end
             end
-          elsif path.is_a? REXML::Element
+          when REXML::Element
             path.elements.each do |child|
               path.elements.delete(child)
             end
             path.text = nil
-            path.attributes.keys.each do |key|
+            path.attributes.each_key do |key|
               path.attributes.delete(key)
             end
           else
@@ -92,12 +97,13 @@ module PuppetX
 
         # Deletes a node
         def rm(path)
-          if path.is_a? Array
+          case path
+          when Array
             path.each do |p|
-              p.parent.elements.delete(p) if p.parent
+              p.parent&.elements&.delete(p)
             end
-          elsif path.is_a? REXML::Element
-            path.parent.elements.delete(p) if path.parent
+          when REXML::Element
+            path.parent&.elements&.delete(p)
           else
             raise ArgumentError
           end
@@ -106,7 +112,7 @@ module PuppetX
         # Sets a node or node attribute to a value.  Creates it if it doesn't exist
         def set(element, value, attribute, path)
           set_element = if element.nil?
-                          built_path = build_path(path.scan(%r{\/([^\[\/]+)(\[[^\]\[]+\])?}))
+                          built_path = build_path(path.scan(%r{/([^\[/]+)(\[[^\]\[]+\])?}))
                           e = built_path[:final_path].first
                           built_path[:remainder].each do |add|
                             e.elements.add(add)
@@ -124,20 +130,21 @@ module PuppetX
 
         # Type is ignored for now as I didn't really have a use case for it.
         def sort(element, attr, _type)
-          if element.is_a?(Array)
+          case element
+          when Array
             element.each do |elem|
-              case attr
-              when 'text'
-                sorted = elem.elements.sort_by(&:text)
-              when nil, ''
-                sorted = elem.elements.sort_by(&:name)
-              else
-                sorted = elem.elements.sort { |e1, e2| e1.attributes[attr] <=> e2.attributes[attr] }
-              end
+              sorted = case attr
+                       when 'text'
+                         elem.elements.sort_by(&:text)
+                       when nil, ''
+                         elem.elements.sort_by(&:name)
+                       else
+                         elem.elements.sort { |e1, e2| e1.attributes[attr] <=> e2.attributes[attr] }
+                       end
               elem.elements.each { |a| elem.elements.delete(a) }
               sorted.each { |a| elem.add_element(a) }
             end
-          elsif element.is_a? REXML::Element
+          when REXML::Element
             sorted = case attr
                      when 'text'
                        elem.elements.sort_by(&:text)
@@ -173,15 +180,14 @@ module PuppetX
             end
           when 'clear'
             # Break down the paths
-            built_path = build_path(parse[2].scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}))
+            built_path = build_path(parse[2].scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}))
 
-            if built_path[:exists] # Only clear if the thing exists
-              @operations.push(proc { clear(built_path[:final_path]) })
-            end
+            @operations.push(proc { clear(built_path[:final_path]) }) if built_path[:exists] # Only clear if the thing exists
           when 'get'
-            query = parse[2].match(%r{^(.*)\ (==|!=|<|>|<=|>=)\ \"(.*)\"$})
+            query = parse[2].match(%r{^(.*)\ (==|!=|<|>|<=|>=)\ "(.*)"$})
             raise ArgumentError if query.nil?
-            attribute = query[1].match(%r{^(.*)([^\[]#attribute\/)(.*)$})
+
+            attribute = query[1].match(%r{^(.*)([^\[]#attribute/)(.*)$})
 
             if attribute.nil?
               path = query[1]
@@ -191,7 +197,7 @@ module PuppetX
               attr = attribute[3]
             end
 
-            built_path = build_path(path.scan(%r{/\/([^\[\/]*)(\[[^\]\[]*\])?}))
+            built_path = build_path(path.scan(%r{//([^\[/]*)(\[[^\]\[]*\])?}))
             if built_path[:exists]
               @validations.push(proc { get(built_path[:final_path], query[2], query[3], attr) })
             else
@@ -200,9 +206,10 @@ module PuppetX
           when 'ins', 'insert'
             args = parse[2].match(%r{(.*)\ (before|after)\ (.*)$})
             raise ArgumentError if args.nil?
-            built_path = build_path(args[3].scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}))
+
+            built_path = build_path(args[3].scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}))
             if built_path[:exists]
-              args[1].scan(%r{\/(^\/)}).each do |item|
+              args[1].scan(%r{/(^/)}).each do |item|
                 puts item
               end
               # do we need to also catch before and after?
@@ -211,7 +218,7 @@ module PuppetX
             query = parse[2].match(%r{(.*)\ size\ (==|!=|<|>|<=|>=)\ (\d)+$})
             raise ArgumentError if query.nil?
 
-            built_path = build_path(query[1].scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}))
+            built_path = build_path(query[1].scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}))
             if built_path[:exists]
               @validations.push(proc { evaluate_expression(built_path[:final_path].size, query[2], query[3].to_i) })
             else
@@ -220,13 +227,12 @@ module PuppetX
           when 'rm', 'remove'
             built_path = build_path(split_xpath(parse[2]))
 
-            if built_path[:exists] # Only clear if the thing exists
-              @operations.push(proc { rm(built_path[:final_path]) })
-            end
+            @operations.push(proc { rm(built_path[:final_path]) }) if built_path[:exists] # Only clear if the thing exists
           when 'set'
-            args = parse[2].match(%r{(.*)\ \"(.*)\"$})
+            args = parse[2].match(%r{(.*)\ "(.*)"$})
             raise ArgumentError if args.nil?
-            attribute = args[1].match(%r{^(.*)([^\[]#attribute\/)(.*)$})
+
+            attribute = args[1].match(%r{^(.*)([^\[]#attribute/)(.*)$})
 
             if attribute.nil?
               path = args[1]
@@ -236,7 +242,7 @@ module PuppetX
               attr = attribute[3]
             end
 
-            built_path = build_path(path.scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}))
+            built_path = build_path(path.scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}))
             if built_path[:exists]
               @operations.push(proc { set(built_path[:final_path], args[2], attr, nil) })
             else
@@ -247,13 +253,12 @@ module PuppetX
             # sort /foo/bar [attribute|text] [desc|asc]
             args = parse[2].match(%r{(.*)(\ )?(.*|text)?(\ )?(desc|asc)?$})
             raise ArgumentError if args.nil?
+
             attribute = args[3]
             attr = (args[3] unless attribute.nil?)
 
-            built_path = build_path(args[1].scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}))
-            if built_path[:exists]
-              @operations.push(proc { sort(built_path[:final_path], attr, args[5]) })
-            end
+            built_path = build_path(args[1].scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}))
+            @operations.push(proc { sort(built_path[:final_path], attr, args[5]) }) if built_path[:exists]
           else
             raise ArgumentError
           end
@@ -262,6 +267,7 @@ module PuppetX
         def build_path(args)
           # We should be getting the output of scan here so it should be an array of arrays
           raise ArgumentError unless args.is_a? Array
+
           remainder = args.map(&:first)
           final_path = match('')
           exists = true
@@ -281,13 +287,12 @@ module PuppetX
           { final_path: final_path, exists: exists, remainder: remainder }
         end
 
-        # rubocop:disable Metrics/BlockNesting
         def collapse_functions(args)
           retval = ''
           cur_path = match('')
-          args.scan(%r{\/([^\[\/]*)(\[[^\]\[]*\])?}).each do |path|
+          args.scan(%r{/([^\[/]*)(\[[^\]\[]*\])?}).each do |path|
             cur_path = match(path.first, cur_path) unless cur_path.nil?
-            ftest = path.last.to_s.match(%r{(last)\((.*)?\)(\+|\-)?(\d+)?})
+            ftest = path.last.to_s.match(%r{(last)\((.*)?\)(\+|-)?(\d+)?})
             if ftest
               append = if ftest[1].eql?('last')
                          test = 0
@@ -309,7 +314,6 @@ module PuppetX
           end
           retval
         end
-        # rubocop:enable Metrics/BlockNesting
 
         def evaluate_expression(attr, expr, val)
           # If attr and val are all digits assume an integer comparison
@@ -343,22 +347,24 @@ module PuppetX
           raise ArgumentError
         end
 
-        # rubocop:disable Metrics/BlockNesting
         def evaluate_match(match, args)
           return match unless args.is_a? String
+
           retval = match
           args.split('][').each do |evaluate|
             evaluate.gsub!(%r{(^\[|\]$)}, '')
-            parse = evaluate.match(%r{(#attribute\/)?(.*)?\ (==|!=|\<|\>|<=|>=)\ \"(.*)\"})
+            parse = evaluate.match(%r{(#attribute/)?(.*)?\ (==|!=|<|>|<=|>=)\ "(.*)"})
             if parse.nil?
               # Either a size check or a function
               if evaluate =~ %r{^(\[)?(\d+)(\])?$} # All digits, must be an index variables
                 index = evaluate.match(%r{^(\[)?(\d+)(\])?$})[2].to_i - 1
                 return nil if (match.length < index) || !retval.include?(match[index])
+
                 retval = [match[index]]
               else # Function or bust!
-                parse = evaluate.match(%r{(last)\((.*)?\)(\+|\-)?(\d+)?$})
+                parse = evaluate.match(%r{(last)\((.*)?\)(\+|-)?(\d+)?$})
                 return nil unless parse
+
                 case parse[1]
                 when 'last'
                   if parse[3]
@@ -367,9 +373,11 @@ module PuppetX
                     raise ArgumentError unless parse[4]
                     # test = match[match.length() - parse[4].to_i]
                     return nil unless retval.include?(match[match.length - parse[4].to_i])
+
                     retval = [match[match.length - parse[4].to_i]]
                   else
                     return nil unless retval.include?(match.last)
+
                     retval = [match.last]
                   end
                 end
@@ -387,6 +395,7 @@ module PuppetX
             end
           end
           return nil if retval.empty?
+
           retval
         end
       end

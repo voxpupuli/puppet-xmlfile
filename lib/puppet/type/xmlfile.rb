@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 require 'puppet/type/file'
 require 'puppet/util/checksums'
 
 begin
   require_relative '../../puppet_x/vox_pupuli/xmlfile/lens'
-rescue
+rescue StandardError
   require 'pathname'
   mod = Puppet::Module.find('xmlfile', Puppet[:environment].to_s)
   raise LoadError('Unable to find xmlfile module in module path') unless mod
+
   require File.join(mod.path, 'lib', 'puppet_x', 'vox_pupuli', 'lens')
 end
 
@@ -40,10 +43,10 @@ Puppet::Type.newtype(:xmlfile) do
   # Note that the parameters defined locally don't actually exist yet until this block is evaluated so to
   # act based on that kind of introspection you would need to move all of this into another file
   # that gets required after this block.
-  IGNORED_PARAMETERS = [:backup, :recurse, :recurselimit, :force,
-                        :ignore, :links, :purge, :sourceselect, :show_diff,
-                        :provider, :checksum, :type, :replace, :path].freeze
-  IGNORED_PROPERTIES = [:ensure, :target, :content].freeze
+  IGNORED_PARAMETERS = %i[backup recurse recurselimit force
+                          ignore links purge sourceselect show_diff
+                          provider checksum type replace path].freeze
+  IGNORED_PROPERTIES = %i[ensure target content].freeze
 
   # Finish up extending the File type - define parameters and properties
   # that aren't ignored and aren't otherwise defined.
@@ -51,13 +54,14 @@ Puppet::Type.newtype(:xmlfile) do
   # Parameters - appear to require a lookup
   Puppet::Type::File.parameters.each do |inherit|
     next if IGNORED_PARAMETERS.include?(inherit)
+
     begin
       klass = Puppet::Type::File.const_get("Parameter#{inherit.to_s.capitalize}")
       newparam(inherit, parent: klass) do
         desc klass.doc
       end
-    rescue StandardError => err
-      warning err.to_s
+    rescue StandardError => e
+      warning e.to_s
       warning "Inheritance assumption case problem: #{klass} undefined but not ignored"
     end
   end
@@ -65,6 +69,7 @@ Puppet::Type.newtype(:xmlfile) do
   # Properties are easier as the class is in the instance variable
   Puppet::Type::File.properties.each do |inherit|
     next if IGNORED_PROPERTIES.include?(inherit.name)
+
     newproperty(inherit.name.to_sym, parent: inherit) do
       desc inherit.doc
     end
@@ -72,11 +77,13 @@ Puppet::Type.newtype(:xmlfile) do
 
   # Need to override the following two functions in order to
   # ignore recurse and backup parameters
-  def bucket        # to ignore :backup
+  # to ignore :backup
+  def bucket
     nil
   end
 
-  def eval_generate # to ignore :recurse
+  # to ignore :recurse
+  def eval_generate
     []
   end
 
@@ -93,9 +100,7 @@ Puppet::Type.newtype(:xmlfile) do
     isnamevar
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
 
     munge do |value|
@@ -131,7 +136,7 @@ Puppet::Type.newtype(:xmlfile) do
 
   def property_fix
     properties.each do |thing|
-      next unless [:mode, :owner, :group, :seluser, :selrole, :seltype, :selrange].include?(thing.name)
+      next unless %i[mode owner group seluser selrole seltype selrange].include?(thing.name)
 
       # Make sure we get a new stat objct
       @stat = :needs_stat
@@ -152,7 +157,7 @@ Puppet::Type.newtype(:xmlfile) do
     include Puppet::Util::Checksums
 
     # Convert the current value into a checksum so we don't pollute the logs
-    def is_to_s(value) # rubocop:disable Style/PredicateName
+    def is_to_s(value)
       md5(value)
     end
 
@@ -181,8 +186,10 @@ Puppet::Type.newtype(:xmlfile) do
   end
 
   # Generates content
-  def should_content # Ape the name from property::should
+  # Ape the name from property::should
+  def should_content
     return @should_content if @should_content # Only do this ONCE
+
     @should_content = ''
 
     # Get our base content
@@ -220,8 +227,6 @@ Puppet::Type.newtype(:xmlfile) do
 
   # Make sure we only set source or content, but not both.
   validate do
-    if self[:source] && self[:content]
-      raise(Puppet::Error, 'Can specify either source or content but not both.')
-    end
+    raise(Puppet::Error, 'Can specify either source or content but not both.') if self[:source] && self[:content]
   end
 end
