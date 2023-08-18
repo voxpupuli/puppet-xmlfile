@@ -39,7 +39,7 @@ Puppet::Type.newtype(:xmlfile_modification) do
   end
 
   newparam(:changes) do
-    desc <<-'EOT'
+    desc <<-EOT
     Changes which should be applied to the file.  Can be a command or an array of commands.  Augeas-esque syntax.
 
     Paths are XPATHs. Attributes are matched via #attribute/<ATTR>, or assumed to be text.  Evaluations must be bracketed.
@@ -93,7 +93,7 @@ Puppet::Type.newtype(:xmlfile_modification) do
   end
 
   newparam(:onlyif) do
-    desc <<-'EOT'
+    desc <<-EOT
     Constrains application of changes via conditionals.  Augeas-esque syntax.
 
     Paths are XPATHs.  Attributes are matched via #attribute/<ATTR>, or assumed to be text.  Evaluations must be bracketed.

@@ -32,7 +32,7 @@ describe 'XmlLens' do
     PuppetX::VoxPupuli::Xmlfile::Lens.new(DOCUMENT, changes).evaluate.to_s
   end
 
-  CONTENT = <<-'EOT'
+  CONTENT = <<-EOT
   <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:amq="http://activemq.apache.org/schema/core"
