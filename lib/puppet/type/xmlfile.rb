@@ -15,7 +15,7 @@ end
 
 # Equivalent to the file resource in every way but how it handles content.
 Puppet::Type.newtype(:xmlfile) do
-  @doc = <<-'EOT'
+  @doc = <<-EOT
     Previously an extension of the base file resource type, now a partial reimplementation with the
     deprecation of :parent.  An xmlfile behaves like a file in all ways
     except that its content can be modified via xmlfile_modification resources.
@@ -104,11 +104,11 @@ Puppet::Type.newtype(:xmlfile) do
     end
 
     munge do |value|
-      if value.start_with?('//') && ::File.basename(value) == '/'
+      if value.start_with?('//') && File.basename(value) == '/'
         # This is a UNC path pointing to a share, so don't add a trailing slash
-        ::File.expand_path(value)
+        File.expand_path(value)
       else
-        ::File.join(::File.split(::File.expand_path(value)))
+        File.join(File.split(File.expand_path(value)))
       end
     end
   end
@@ -150,7 +150,7 @@ Puppet::Type.newtype(:xmlfile) do
 
   # Actual file content
   newproperty(:content) do
-    desc <<-'EOT'
+    desc <<-EOT
       The desired contents of a file, as a string. This attribute is mutually
       exclusive with `source`.
     EOT
@@ -168,7 +168,7 @@ Puppet::Type.newtype(:xmlfile) do
   end
 
   newparam(:raw) do
-    desc <<-'EOT'
+    desc <<-EOT
       The desired formatting of the content after being passed through the REXML lens.
     EOT
 
@@ -177,7 +177,7 @@ Puppet::Type.newtype(:xmlfile) do
 
   # Formatting:  In case you want REXML to pretty things up.
   newparam(:format) do
-    desc <<-'EOT'
+    desc <<-EOT
       The desired formatting of the content after being passed through the REXML lens.
     EOT
 
