@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:xmlfile).provide(:xmlfile_posix, parent: Puppet::Type.type(:file).provider(:posix)) do
   confine feature: :posix
 
@@ -16,10 +18,10 @@ Puppet::Type.type(:xmlfile).provide(:xmlfile_posix, parent: Puppet::Type.type(:f
 
   def content
     actual = begin
-               File.read(resource[:path])
-             rescue
-               nil
-             end
+      File.read(resource[:path])
+    rescue StandardError
+      nil
+    end
     actual == resource.should_content ? resource[:content] : actual
   end
 
