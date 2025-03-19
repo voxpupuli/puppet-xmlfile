@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:xmlfile_modification) do
@@ -24,6 +26,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         )
       end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
+
     it 'does not accept invalid commands' do
       expect do
         testobject.new(
@@ -33,6 +36,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         )
       end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
+
     describe 'ins' do
       it 'validates syntax' do
         expect do
@@ -44,6 +48,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
     end
+
     describe 'set' do
       it 'validates syntax' do
         expect do
@@ -67,6 +72,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         )
       end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
+
     it 'does not accept invalid commands' do
       expect do
         testobject.new(
@@ -76,6 +82,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         )
       end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
+
     describe 'get' do
       it 'validates syntax' do
         expect do
