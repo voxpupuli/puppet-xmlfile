@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet_x/vox_pupuli/xmlfile/lens'
 require 'compare-xml'
@@ -17,6 +19,7 @@ def xml_equivalent?(str1, _str2)
   n1 = Nokogiri::XML(str1)
   n2 = Nokogiri::XML(str1)
   raise ArgumentError if n1.nil? && n2.nil?
+
   CompareXML.equivalent?(n1, n2, verbose: true)
 end
 
@@ -29,7 +32,7 @@ describe 'XmlLens' do
     PuppetX::VoxPupuli::Xmlfile::Lens.new(DOCUMENT, changes).evaluate.to_s
   end
 
-  CONTENT = <<-'EOT'.freeze
+  CONTENT = <<-EOT
   <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:amq="http://activemq.apache.org/schema/core"
@@ -95,7 +98,7 @@ describe 'XmlLens' do
       <import resource="jetty.xml"/>
 
   </beans>
-      EOT
+  EOT
 
   DOCUMENT = REXML::Document.new(CONTENT)
 
