@@ -161,7 +161,9 @@ module PuppetX
         private
 
         def split_xpath(path)
-          path.scan(%r{/([^\[/]*)((?:\[[^\]\[]*\])*)})
+          # Remove #attribute parts from path before scanning as they're not valid XPath
+          cleaned_path = path.gsub(%r{/#attribute/[^/\[]*}, '')
+          cleaned_path.scan(%r{/([^\[/]*)((?:\[[^\]\[]*\])*)})
         end
 
         def parser(string)
@@ -317,7 +319,7 @@ module PuppetX
 
         def evaluate_expression(attr, expr, val)
           # If attr and val are all digits assume an integer comparison
-          if attr =~ %r{^(\d)+$} && val =~ %r{^(\d)+$}
+          if attr.to_s =~ %r{^(\d)+$} && val.to_s =~ %r{^(\d)+$}
             eval_attr = attr.to_i
             eval_val  = val.to_i
           else
