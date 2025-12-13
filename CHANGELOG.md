@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v2.0.0](https://github.com/voxpupuli/puppet-xmlfile/tree/v2.0.0) (2025-12-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-xmlfile/compare/v1.0.0...v2.0.0)
+
+**Breaking changes:**
+
+- Drop puppet, update openvox minimum version to 8.19 [\#28](https://github.com/voxpupuli/puppet-xmlfile/pull/28) ([TheMeier](https://github.com/TheMeier))
+- Drop Puppet 6 support [\#24](https://github.com/voxpupuli/puppet-xmlfile/pull/24) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- metadata.json: Add OpenVox [\#27](https://github.com/voxpupuli/puppet-xmlfile/pull/27) ([jstraw](https://github.com/jstraw))
+
+**Fixed bugs:**
+
+- Fix XPath parsing in Puppet XMLfile lens [\#23](https://github.com/voxpupuli/puppet-xmlfile/pull/23) ([bastelfreak](https://github.com/bastelfreak))
+- fix for issue 21 "Autoloading and XmlLens loading fails" [\#22](https://github.com/voxpupuli/puppet-xmlfile/pull/22) ([wolfaba](https://github.com/wolfaba))
+
+**Closed issues:**
+
+- Autoloading and XmlLens loading fails [\#21](https://github.com/voxpupuli/puppet-xmlfile/issues/21)
+
 ## [v1.0.0](https://github.com/voxpupuli/puppet-xmlfile/tree/v1.0.0) (2021-06-13)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-xmlfile/compare/v0.4.0...v1.0.0)
