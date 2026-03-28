@@ -107,13 +107,13 @@ describe 'XmlLens' do
       {
         change: 'set /beans/broker/plugins/authorizationPlugin/map/authorizationMap/authorizationEntries/authorizationEntry/[last()+1]/#attribute/queue "test"',
         pattern: '</broker>',
-        replacement: "<plugins><authorizationPlugin><map><authorizationMap><authorizationEntries><authorizationEntry queue='test'/></authorizationEntries></authorizationMap></map></authorizationPlugin></plugins></broker>"
+        replacement: "<plugins><authorizationPlugin><map><authorizationMap><authorizationEntries><authorizationEntry queue='test'/></authorizationEntries></authorizationMap></map></authorizationPlugin></plugins></broker>",
       },
       {
         change: 'set /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/name == "amqp"]/#attribute/uri "udp://testuri"',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
-        replacement: '<transportConnector name="amqp" testattr="2" uri="udp://testuri"/>'
-      }
+        replacement: '<transportConnector name="amqp" testattr="2" uri="udp://testuri"/>',
+      },
     ]
 
     test_list.each do |test|
@@ -138,35 +138,35 @@ describe 'XmlLens' do
       {
         change: 'rm /beans/broker/plugins/authorizationPlugin/map/authorizationMap/authorizationEntries/authorizationEntry/[last()+1]/#attribute/queue "test"',
         pattern: '',
-        replacement: ''
+        replacement: '',
       },
       {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/name == "amqp"]',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
-        replacement: ''
+        replacement: '',
       },
       {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/name == "amqp"][#attribute/testattr == "2"]',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
-        replacement: ''
+        replacement: '',
       },
       {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr == "2"][#attribute/name == "amqp"]',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
-        replacement: ''
+        replacement: '',
       },
       {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr == "2"][#attribute/name != "fake"]',
         pattern: '<transportConnector name="amqp" uri="amqp://0.0.0.0:5672?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600" testattr="2"/>',
-        replacement: ''
-      }
+        replacement: '',
+      },
     ]
 
     it 'does not remove transport when testattr does not match' do
       test = {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr != "2"][#attribute/name == "amqp"]',
         pattern: '',
-        replacement: ''
+        replacement: '',
       }
       result = lens_result(test[:change])
       expected_result = CONTENT.gsub(test[:pattern], test[:replacement])
@@ -178,7 +178,7 @@ describe 'XmlLens' do
       test = {
         change: 'rm /beans/broker[#attribute/brokerName == "localhost"]/transportConnectors/transportConnector[#attribute/testattr == "2"][#attribute/name != "amqp"]',
         pattern: '',
-        replacement: ''
+        replacement: '',
       }
       result = lens_result(test[:change])
       expected_result = CONTENT.gsub(test[:pattern], test[:replacement])

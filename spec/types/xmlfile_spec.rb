@@ -12,7 +12,7 @@ describe Puppet::Type.type(:xmlfile) do
       expect do
         testobject.new(
           name: 'foo',
-          path: 'my/path'
+          path: 'my/path',
         )
       end.to raise_error(Puppet::Error, %r{paths must be fully qualified})
     end
@@ -24,7 +24,7 @@ describe Puppet::Type.type(:xmlfile) do
         testobject.new(
           name: 'foo',
           path: '/my/path',
-          ctime: 'somevalue'
+          ctime: 'somevalue',
         )
       end.to raise_error(Puppet::Error, %r{read-only})
     end
@@ -36,7 +36,7 @@ describe Puppet::Type.type(:xmlfile) do
         testobject.new(
           name: 'foo',
           path: '/my/path',
-          mtime: 'somevalue'
+          mtime: 'somevalue',
         )
       end.to raise_error(Puppet::Error, %r{read-only})
     end
@@ -48,7 +48,7 @@ describe Puppet::Type.type(:xmlfile) do
         testobject.new(
           name: 'foo',
           path: '/my/path',
-          group: ''
+          group: '',
         )
       end.to raise_error(Puppet::Error, %r{Invalid group name})
     end
@@ -60,7 +60,7 @@ describe Puppet::Type.type(:xmlfile) do
         testobject.new(
           name: 'foo',
           path: '/my/path',
-          mode: 'fghl'
+          mode: 'fghl',
         )
       end.to raise_error(Puppet::Error, %r{file mode specification is invalid})
     end
@@ -72,7 +72,7 @@ describe Puppet::Type.type(:xmlfile) do
         testobject.new(
           name: 'foo',
           path: '/my/path',
-          source: 'modules/puppet/file'
+          source: 'modules/puppet/file',
         )
       end.to raise_error(Puppet::Error, %r{Cannot use relative URLs})
     end

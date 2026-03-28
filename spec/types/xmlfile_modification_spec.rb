@@ -10,7 +10,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
       expect do
         testobject.new(
           name: 'foo',
-          file: 'my/path'
+          file: 'my/path',
         )
       end.to raise_error(Puppet::Error, %r{paths must be fully qualified})
     end
@@ -22,7 +22,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         testobject.new(
           name: 'test',
           file: '/my/path',
-          changes: ['set blah/bloo/hah "test"']
+          changes: ['set blah/bloo/hah "test"'],
         )
       end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
@@ -32,7 +32,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         testobject.new(
           name: 'test',
           file: '/my/path',
-          changes: ['sets /blah/bloo/hah "test"']
+          changes: ['sets /blah/bloo/hah "test"'],
         )
       end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
@@ -43,7 +43,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
           testobject.new(
             name: 'test',
             file: '/my/path',
-            changes: ['ins blue befores red']
+            changes: ['ins blue befores red'],
           )
         end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
@@ -55,7 +55,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
           testobject.new(
             name: 'test',
             file: '/my/path',
-            changes: ['set /blah/bloo/hah test']
+            changes: ['set /blah/bloo/hah test'],
           )
         end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
@@ -68,7 +68,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         testobject.new(
           name: 'test',
           file: '/my/path',
-          onlyif: ['get blah/bloo/hah == "test"']
+          onlyif: ['get blah/bloo/hah == "test"'],
         )
       end.to raise_error(Puppet::Error, %r{invalid xpath})
     end
@@ -78,7 +78,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
         testobject.new(
           name: 'test',
           file: '/my/path',
-          onlyif: ['gets /blah/bloo/hah "test"']
+          onlyif: ['gets /blah/bloo/hah "test"'],
         )
       end.to raise_error(Puppet::Error, %r{Unrecognized command})
     end
@@ -89,7 +89,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
           testobject.new(
             name: 'test',
             file: '/my/path',
-            onlyif: ['get /blah/bloo/hah test']
+            onlyif: ['get /blah/bloo/hah test'],
           )
         end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end
@@ -101,7 +101,7 @@ describe Puppet::Type.type(:xmlfile_modification) do
           testobject.new(
             name: 'test',
             file: '/my/path',
-            onlyif: ['match /blah/bloo/hah test']
+            onlyif: ['match /blah/bloo/hah test'],
           )
         end.to raise_error(Puppet::Error, %r{Invalid syntax})
       end

@@ -23,7 +23,7 @@ Puppet::Type.type(:xmlfile).provide(:xmlfile_windows, parent: Puppet::Type.type(
     rescue StandardError
       nil
     end
-    actual == resource.should_content ? resource[:content] : actual
+    (actual == resource.should_content) ? resource[:content] : actual
   end
 
   def content=(_value)
