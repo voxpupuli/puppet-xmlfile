@@ -3,3 +3,4 @@ Gemfile:
   optional:
     ':test':
       - gem: 'compare-xml'
+      - gem: 'rexml'

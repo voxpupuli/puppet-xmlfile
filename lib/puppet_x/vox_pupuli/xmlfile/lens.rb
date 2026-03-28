@@ -329,22 +329,22 @@ module PuppetX
 
           case expr
           when '=='
-            return (eval_attr == eval_val)
+            return eval_attr == eval_val
           when '!='
-            return (eval_attr != eval_val)
+            return eval_attr != eval_val
           when '+'
-            return (attr + val)
+            return attr + val
           when '-'
-            return (attr - val)
+            return attr - val
           # The rest are only math so we do a conversion to_i
           when '<'
-            return (attr.to_i < val.to_i)
+            return attr.to_i < val.to_i
           when '>'
-            return (attr.to_i > val.to_i)
+            return attr.to_i > val.to_i
           when '<='
-            return (attr.to_i <= val.to_i)
+            return attr.to_i <= val.to_i
           when '>='
-            return (attr.to_i >= val.to_i)
+            return attr.to_i >= val.to_i
           end
           raise ArgumentError
         end
