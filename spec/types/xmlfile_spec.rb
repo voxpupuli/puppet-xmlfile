@@ -77,4 +77,31 @@ describe Puppet::Type.type(:xmlfile) do
       end.to raise_error(Puppet::Error, %r{Cannot use relative URLs})
     end
   end
+
+  describe 'exist?' do
+    it 'is true for an existing file' do
+      Tempfile.create('xmlfile') do |f|
+        expect(testobject.new(path: f.path).exist?).to be true
+      end
+    end
+
+    it 'is false for a missing file' do
+      expect(testobject.new(path: '/nonexistent/xmlfile.xml').exist?).to be false
+    end
+  end
+
+  describe 'should_content' do
+    it 'renders content with modifications' do
+      catalog = Puppet::Resource::Catalog.new
+      xmlfile = testobject.new(path: '/my/path', content: '<a/>')
+      modification = Puppet::Type.type(:xmlfile_modification).new(
+        name: 'set attr',
+        file: '/my/path',
+        changes: 'set /a/#attribute/b "c"',
+      )
+      catalog.add_resource(xmlfile, modification)
+
+      expect(xmlfile.should_content).to eq("<a b='c'/>")
+    end
+  end
 end

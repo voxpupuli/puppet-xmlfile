@@ -113,6 +113,11 @@ Puppet::Type.newtype(:xmlfile) do
     end
   end
 
+  def initialize(hash)
+    super
+    @stat = :needs_stat
+  end
+
   def exist?
     stat ? true : false
   end
@@ -190,7 +195,7 @@ Puppet::Type.newtype(:xmlfile) do
   def should_content
     return @should_content if @should_content # Only do this ONCE
 
-    @should_content = ''
+    @should_content = +''
 
     # Get our base content
     # Need to retrieve and render our current content
